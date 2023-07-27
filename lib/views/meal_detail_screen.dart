@@ -7,108 +7,37 @@ import '../models/meal.dart';
 class MealDetailScreen extends StatelessWidget {
   final String mealId;
 
-  MealDetailScreen({required this.mealId});
+  MealDetailScreen({Key? key, required this.mealId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var mealProvider = Provider.of<MealProvider>(context);
+    final meal = mealProvider.findMealById(mealId);
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Meal Details'),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
+        title: Text('Meal Detail'),
       ),
-      body: FutureBuilder<Meal>(
-        future:
-            Provider.of<MealProvider>(context, listen: false).fetchData(mealId),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.error != null) {
-            // You can also handle errors here
-            return Center(child: Text('An error occurred!'));
-          } else {
-            return Container(
-              padding: EdgeInsets.all(10),
+      body: meal != null
+          ? Padding(
+              padding: EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Text(
-                    snapshot.data!.mealName,
-                    style: TextStyle(fontSize: 24),
-                  ),
-                  SizedBox(height: 10),
-                  Image.network(snapshot.data!.mealThumb),
-                  SizedBox(height: 10),
-                  Text(
-                    'ID: ${snapshot.data!.idMeal}',
-                    style: TextStyle(fontSize: 18),
-                  ),
+                  Text(meal.mealName,
+                      style: Theme.of(context).textTheme.headline6),
+                  SizedBox(height: 8),
+                  Image.network(meal.mealThumb),
+                  SizedBox(height: 8),
+                  Text('Instructions: ${meal.mealInstructions}'),
+                  SizedBox(height: 8),
+                  Text('Category: ${meal.mealCategory}'),
+                  SizedBox(height: 8),
+                  Text('Area: ${meal.mealArea}'),
                 ],
               ),
-            );
-          }
-        },
-      ),
+            )
+          : Center(child: Text('Loading...')),
     );
   }
 }
-
-
-
-
-// class MealDetailScreen extends StatelessWidget {
-//   final Meal meal;
-
-//   MealDetailScreen({required this.meal});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text(meal.mealName),
-//       ),
-//       body: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: <Widget>[
-//             Image.network(meal.mealThumb),
-//             Text(meal.mealName),
-//             Text('ID: ${meal.idMeal}'),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-
-// class MealDetailScreen extends StatelessWidget {
-//   final Meal meal;
-
-//   MealDetailScreen({required this.meal});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text(meal.mealName),
-//       ),
-//       body: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: <Widget>[
-//             Image.network(meal.mealThumb),
-//             Text(
-//               meal.mealName,
-//               style: Theme.of(context).textTheme.headline4,
-//             ),
-//             SizedBox(height: 16),
-//             Text('ID: ${meal.idMeal}'),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
